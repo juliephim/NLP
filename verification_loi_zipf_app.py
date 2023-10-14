@@ -64,7 +64,7 @@ def tokenize_text(text, lang="en"):
 
 
 # Fonction pour nettoyer le texte
-def clean_text(text):
+def updated_clean_text(text, lang="en"):
     replacer = RegexpReplacer()
     text = replacer.replace(text)
     text = text.lower()
@@ -72,7 +72,7 @@ def clean_text(text):
     return text
 
 # Fonction pour vérifier la loi de Zipf
-def verify_zipf_law(text):
+def updated_verify_zipf_law(text, lang="en"):
     words = tokenize_text(text, lang)
     word_freq = Counter(words)
     sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
@@ -150,4 +150,4 @@ if st.button("Vérifier"):
     st.write(lemmatized_text)
     
     cleaned_text = clean_text(text_input)
-    verify_zipf_law(cleaned_text)
+    updated_verify_zipf_law(cleaned_text, detected_lang)
