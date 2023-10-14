@@ -78,6 +78,9 @@ text_input = st.text_area("Entrez votre texte ici:")
 import spacy
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
+
 
 # Charger les modèles spaCy pour l'anglais et le français
 nlp_en = spacy.load("en_core_web_sm")
