@@ -26,13 +26,13 @@ def plot_zipf(text, clean=True):
     # Récupère les fréquences
     frequencies = [count for word, count in sorted_word_counts]
     
-    # Trace le graphique log-log
-    plt.figure(figsize=(10, 7))
-    plt.loglog(frequencies)
-    plt.xlabel('Rang')
-    plt.ylabel('Fréquence')
-    plt.title('Loi de Zipf')
-    st.pyplot()
+    # Trace le graphique log-log avec modification pour éviter l'avertissement
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.loglog(frequencies)
+    ax.set_xlabel('Rang')
+    ax.set_ylabel('Fréquence')
+    ax.set_title('Loi de Zipf')
+    st.pyplot(fig)
 
 # Code principal de l'application Streamlit
 def main():
