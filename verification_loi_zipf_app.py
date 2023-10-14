@@ -68,7 +68,13 @@ def corrected_clean_text(text, lang="en"):
     replacer = RegexpReplacer()
     text = replacer.replace(text)
     text = text.lower()
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    
+    # If language is French, use a regex pattern that conserves French accents
+    if lang == "fr":
+        text = re.sub(r'[^a-zàâäéèêëîïôöùûüçA-ZÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ\s]', '', text)
+    else:
+        text = re.sub(r'[^a-zA-Z\s]', '', text)
+    
     return text
 
 # Fonction pour vérifier la loi de Zipf
@@ -152,3 +158,5 @@ if st.button("Vérifier"):
     detected_lang = detect_language(text_input)
     cleaned_text = corrected_clean_text(text_input, detected_lang)
     updated_verify_zipf_law(cleaned_text, detected_lang)
+
+
