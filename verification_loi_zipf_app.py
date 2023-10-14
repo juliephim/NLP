@@ -122,44 +122,28 @@ def enhanced_verify_zipf_law(text, lang="en"):
     sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
     frequencies = [freq for word, freq in sorted_word_freq]
     
-    # Calculating the slope for Zipf's law validation
-    ranks = range(1, len(frequencies) + 1)
-    log_ranks = np.log(ranks)
-    log_frequencies = np.log(frequencies)
-    slope, _, _, _, _ = np.polyfit(log_ranks, log_frequencies, 1)
+ # Calculating the slope for Zipf's law validation
+ranks = range(1, len(frequencies) + 1)
+log_ranks = np.log(ranks)
+log_frequencies = np.log(frequencies)
+slope, _, _, _, _ = np.polyfit(log_ranks, log_frequencies, 1)
     
-    # Plotting Zipf's law graph
-    plt.figure(figsize=(10, 7))
-    sns.lineplot(x=ranks, y=frequencies, marker="o", dashes=False)
-    plt.yscale("log")
-    plt.xscale("log")
-    plt.ylabel('Fréquence')
-    plt.xlabel('Rang')
-    plt.title('Vérification de la loi de Zipf')
-    plt.grid(True, which="both", ls="--", c='0.65')
-    st.pyplot(plt)
+# Plotting Zipf's law graph
+plt.figure(figsize=(10, 7))
+sns.lineplot(x=ranks, y=frequencies, marker="o", dashes=False)
+plt.yscale("log")
+plt.xscale("log")
+plt.ylabel('Fréquence')
+plt.xlabel('Rang')
+plt.title('Vérification de la loi de Zipf')
+plt.grid(True, which="both", ls="--", c='0.65')
+st.pyplot(plt)
     
     # Providing feedback based on the slope
-    if -1.1 < slope < -0.9:
-        st.write(f"La pente de la courbe log-log est {slope:.2f}. Oui, ce texte respecte presque parfaitement la loi de Zipf !")
-    else:
-        st.write(f"La pente de la courbe log-log est {slope:.2f}. Ce texte ne respecte pas parfaitement la loi de Zipf.")
-
-# Function to plot word frequencies
-def plot_word_frequencies(text, lang="en"):
-    words = tokenize_text(text, lang)
-    word_freq = Counter(words)
-    sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)[:30]
-    
-    words = [word for word, freq in sorted_word_freq]
-    frequencies = [freq for word, freq in sorted_word_freq]
-    
-    plt.figure(figsize=(12, 8))
-    sns.barplot(x=frequencies, y=words, palette="viridis")
-    plt.xlabel('Fréquence')
-    plt.ylabel('Mots')
-    plt.title('Fréquence des mots les plus courants')
-    st.pyplot(plt)
+if -1.1 < slope < -0.9:
+    st.write(f"La pente de la courbe log-log est {slope:.2f}. Oui, ce texte respecte presque parfaitement la loi de Zipf !")
+else:
+    st.write(f"La pente de la courbe log-log est {slope:.2f}. Ce texte ne respecte pas parfaitement la loi de Zipf.")
 
 # Créer une fonction pour la lemmatisation
 def lemmatize_text(text, language="en"):
@@ -206,6 +190,5 @@ if st.button("Vérifier"):
     detected_lang = detect_language(text_input)
     cleaned_text = corrected_clean_text(text_input, detected_lang)
     updated_verify_zipf_law(cleaned_text, detected_lang)
-    plot_word_frequencies(cleaned_text, detected_lang)
 
 
