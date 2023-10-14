@@ -74,7 +74,7 @@ def corrected_clean_text(text, lang="en"):
         text = re.sub(r'[^a-zàâäéèêëîïôöùûüçA-ZÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ\s]', '', text)
     else:
         text = re.sub(r'[^a-zA-Z\s]', '', text)
-    
+        
     return text
 
 # Fonction pour vérifier la loi de Zipf
