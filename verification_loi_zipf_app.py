@@ -143,11 +143,13 @@ else:
 
 remove_stopwords = st.checkbox("Supprimer les mots vides")
 if st.button("Vérifier"):
-    cleaned_text = updated_clean_text(text_input, detected_lang)
+    detected_lang = detect_language(text_input)
+cleaned_text = updated_clean_text(text_input, detected_lang)
     tokenized_text = tokenize_text(cleaned_text, remove_stopwords, lang_detected)
     lemmatized_text = lemmatize_text(tokenized_text, lang_detected)
     st.write("Texte après tokenisation et prétraitement :")
     st.write(lemmatized_text)
     
-    cleaned_text = updated_clean_text(text_input, detected_lang)
+    detected_lang = detect_language(text_input)
+cleaned_text = updated_clean_text(text_input, detected_lang)
     updated_verify_zipf_law(cleaned_text, detected_lang)
