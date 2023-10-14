@@ -149,7 +149,6 @@ if st.button("Vérifier"):
     lemmatized_text = lemmatize_text(tokenized_text, lang_detected)
     st.write("Texte après tokenisation et prétraitement :")
     st.write(lemmatized_text)
-    
-detected_lang = detect_language(text_input)
-cleaned_text = updated_clean_text(text_input, detected_lang)
-updated_verify_zipf_law(cleaned_text, detected_lang)
+    detected_lang = detect_language(text_input)
+    cleaned_text = updated_clean_text(text_input, detected_lang)
+    updated_verify_zipf_law(cleaned_text, detected_lang)
