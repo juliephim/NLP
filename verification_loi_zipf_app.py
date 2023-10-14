@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from collections import Counter
 import re
 
-
 # Code for handling contractions
 
 replacement_patterns = [
@@ -75,6 +74,39 @@ st.write(
 )
 text_input = st.text_area("Entrez votre texte ici:")
 
+
+import spacy
+from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
+
+# Charger les modèles spaCy pour l'anglais et le français
+nlp_en = spacy.load("en_core_web_sm")
+nlp_fr = spacy.load("fr_core_news_sm")
+
+# Créer une fonction pour la lemmatisation
+def lemmatize_text(text, language="en"):
+    if language == "en":
+        doc = nlp_en(text)
+    elif language == "fr":
+        doc = nlp_fr(text)
+    else:
+        return text  # Si la langue n'est ni anglais ni français, retourner le texte tel quel
+    return " ".join([token.lemma_ for token in doc])
+
+# Créer une fonction pour la tokenisation
+def tokenize_text(text, remove_stopwords=False, language="en"):
+    tokenizer = RegexpTokenizer(r'\w+')
+    tokens = tokenizer.tokenize(text)
+    if remove_stopwords:
+        if language == "en":
+            stop_words = set(stopwords.words('english'))
+        elif language == "fr":
+            stop_words = set(stopwords.words('french'))
+        else:
+            stop_words = set()
+        tokens = [token for token in tokens if token not in stop_words]
+    return " ".join(tokens)
+
 # Language detection and message display
 lang_detected = detect_language(text_input)
 if lang_detected == "en":
@@ -84,6 +116,14 @@ elif lang_detected == "fr":
 else:
     st.write("Sorry, I couldn't determine the language. Let's see if Zipf's law can be applied!! :)")
 
+
+remove_stopwords = st.checkbox("Supprimer les mots vides")
 if st.button("Vérifier"):
+    cleaned_text = clean_text(text_input)
+    tokenized_text = tokenize_text(cleaned_text, remove_stopwords, lang_detected)
+    lemmatized_text = lemmatize_text(tokenized_text, lang_detected)
+    st.write("Texte après tokenisation et prétraitement :")
+    st.write(lemmatized_text)
+    
     cleaned_text = clean_text(text_input)
     verify_zipf_law(cleaned_text)
