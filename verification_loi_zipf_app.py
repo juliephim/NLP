@@ -42,6 +42,27 @@ def detect_language(text):
         return "Indéterminé"
 
 
+
+def tokenize_text(text, lang="en"):
+    """
+    Tokenizes the text using nltk's word_tokenize.
+    Args:
+    - text (str): Input text.
+    - lang (str): Language of the text (default is "en").
+    
+    Returns:
+    List[str]: List of tokens.
+    """
+    tokens = word_tokenize(text)
+    
+    # Remove stopwords
+    if lang in ["en", "fr"]:
+        stop_words = set(stopwords.words(lang))
+        tokens = [word for word in tokens if word.lower() not in stop_words]
+    
+    return tokens
+
+
 # Fonction pour nettoyer le texte
 def clean_text(text):
     replacer = RegexpReplacer()
@@ -52,7 +73,7 @@ def clean_text(text):
 
 # Fonction pour vérifier la loi de Zipf
 def verify_zipf_law(text):
-    words = text.split()
+    words = tokenize_text(text, lang)
     word_freq = Counter(words)
     sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
     frequencies = [freq for word, freq in sorted_word_freq]
