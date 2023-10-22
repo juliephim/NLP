@@ -74,7 +74,7 @@ def main():
 
     # Barre latérale de navigation
     option = st.sidebar.selectbox("1 - Starting with language datas",
-    ('Tokenization', 'Onglet 2', 'Onglet 3'))
+    ('Tokenization', 'Lemmatization and Stemming', 'Similarity measurement'))
 
     if option == 'Tokenization':
         show_tokenization()
@@ -85,7 +85,7 @@ def main():
 
 #-----------------------------1er ONGLET : TOKENIZATION WITH NLTK
 def show_tokenization():
-    st.title("Tokenization with NLTK")
+    st.head("Tokenization with NLTK")
     
     # Saisie de texte par l'utilisateur
     user_input = st.text_area("Enter the text to tokenize:", "")
@@ -125,7 +125,7 @@ def show_tokenization():
 
 #-----------------------------2eme ONGLET : Lemmatization & Stemming
 def show_lemmatization():
-    st.write("Lemmatization & Stemming")
+    st.head("Lemmatization & Stemming")
 
     user_input = st.text_area("Enter the text here:")
 
@@ -144,9 +144,9 @@ def show_lemmatization():
             result = ' '.join([stemmer.stem(word) for word in user_input.split()])
             st.write("Result after Stemming:", result)
 
-#-----------------------------3eme ONGLET : Similarity_measure
+#-----------------------------3eme ONGLET : Similarity measure
 def Similarity():
-    st.write("Similarity measurement using Jaccard's coefficient")
+    st.head("Similarity measurement using Jaccard's coefficient")
 
     # Les zones de texte pour entrer les séquences de mots
     seq1 = st.text_area("Enter the first sequence of words (separated by spaces):")
