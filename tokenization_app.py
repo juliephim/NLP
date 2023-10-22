@@ -85,7 +85,7 @@ def main():
 
 #-----------------------------1er ONGLET : TOKENIZATION WITH NLTK
 def show_tokenization():
-    st.head("Tokenization with NLTK")
+    st.title("Tokenization with NLTK")
     
     # Saisie de texte par l'utilisateur
     user_input = st.text_area("Enter the text to tokenize:", "")
@@ -125,7 +125,7 @@ def show_tokenization():
 
 #-----------------------------2eme ONGLET : Lemmatization & Stemming
 def show_lemmatization():
-    st.head("Lemmatization & Stemming")
+    st.title("Lemmatization & Stemming")
 
     user_input = st.text_area("Enter the text here:")
 
@@ -146,7 +146,7 @@ def show_lemmatization():
 
 #-----------------------------3eme ONGLET : Similarity measure
 def Similarity():
-    st.head("Similarity measurement using Jaccard's coefficient")
+    st.title("Similarity measurement using Jaccard's coefficient")
 
     # Les zones de texte pour entrer les séquences de mots
     seq1 = st.text_area("Enter the first sequence of words (separated by spaces):")
