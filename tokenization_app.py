@@ -73,7 +73,7 @@ def remove_stopwords(text, language='english'):
 def main():
 
     # Barre latérale de navigation
-    option = st.sidebar("1 - Starting with language datas",
+    option = st.sidebar.selectbox("1 - Starting with language datas",
     ('Tokenization', 'Onglet 2', 'Onglet 3'))
 
     if option == 'Tokenization':
