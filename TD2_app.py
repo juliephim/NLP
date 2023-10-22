@@ -52,17 +52,11 @@ def process_docs(directory, is_train):
 
 # Load, clean, and extract adverbs from a dataset
 def load_clean_dataset(is_train):
-    neg = process_docs('C:/Users/phimj/OneDrive - De Vinci/A5/NLP_cours/Séance 2/txt_sentoken/neg', is_train)
-    pos = process_docs('C:/Users/phimj/OneDrive - De Vinci/A5/NLP_cours/Séance 2/txt_sentoken/pos', is_train)
+    neg = process_docs('./neg', is_train)
+    pos = process_docs('./pos', is_train)
     docs = neg + pos
     labels = [0 for _ in range(len(neg))] + [1 for _ in range(len(pos))]
     return docs, labels
-
-# Save a dataset to file
-def save_dataset(dataset, filename):
-    full_path = 'C:/Users/phimj/OneDrive - De Vinci/A5/NLP_cours/Séance 2/' + filename
-    dump(dataset, open(full_path, 'wb'))
-    print('Saved: %s' % full_path)
 
 def get_sentiment_score(word):
     """Get the sentiment score of a word using SentiWordNet."""
