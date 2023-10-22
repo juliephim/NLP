@@ -1,12 +1,51 @@
 
 import streamlit as st
 import nltk
-from nltk.tokenize import sent_tokenize, word_tokenize, RegexpTokenizer, TreebankWordTokenizer, WordPunctTokenizer
+from nltk.tokenize import word_tokenize, RegexpTokenizer, TreebankWordTokenizer, WordPunctTokenizer
 from nltk.corpus import stopwords
+import re
 
+
+replacement_patterns = [
+	(r'won\'t', 'will not'),
+	(r'can\'t', 'cannot'),
+	(r'i\'m', 'i am'),
+	(r'ain\'t', 'is not'),
+	(r'(\w+)\'ll', '\g<1> will'),
+	(r'(\w+)n\'t', '\g<1> not'),
+	(r'(\w+)\'ve', '\g<1> have'),
+	(r'(\w+)\'s', '\g<1> is'),
+	(r'(\w+)\'re', '\g<1> are'),
+	(r'(\w+)\'d', '\g<1> would'),
+]
+
+class RegexpReplacer(object):
+	#""" Replaces regular expression in a text.
+	#>>> replacer = RegexpReplacer()
+	#>>> replacer.replace("can't is a contraction")
+	#'cannot is a contraction'
+	#>>> replacer.replace("I should've done that thing I didn't do")
+	#'I should have done that thing I did not do'
+	#"""
+	def __init__(self, patterns=replacement_patterns):
+		self.patterns = [(re.compile(regex), repl) for (regex, repl) in patterns]
+	
+	def replace(self, text):
+		s = text
+		
+		for (pattern, repl) in self.patterns:
+			s = re.sub(pattern, repl, s)
+		
+		return s
+# Fonction pour substitution avant tokenization     
+def substitution(text):
+    replacer=RegexpReplacer()
+    return replacer(text)
+     
 # Fonction pour tokenizer des phrases
 def tokenize_sentences(text):
-    return sent_tokenize(text)
+    tokenizer=nltk.data.load('tokenizers/punkt/english.pickle')
+    return tokenizer.tokenize(text)
 
 # Fonction pour tokenizer des mots avec TreebankWordTokenizer
 def tokenize_with_treebank(text):
@@ -24,7 +63,7 @@ def tokenize_with_regex(text):
     return tokenizer.tokenize(text)
 
 # Fonction pour supprimer les mots vides (stop words)
-def remove_stopwords(text, language='french'):
+def remove_stopwords(text, language='english'):
     words = word_tokenize(text)
     stops = set(stopwords.words(language))
     return [word for word in words if word not in stops]
@@ -35,27 +74,38 @@ def main():
     # Saisie de texte par l'utilisateur
     user_input = st.text_area("Entrez le texte à tokenizer:", "")
     
+    st.info("For information, the substitution was performing (RegexepReplacer)", icon="i")
+
+    convert_lower = st.checkbox('Convertir en minuscules')
+    convert_upper = st.checkbox('Convertir en majuscules')
+
+    if convert_lower:
+        user_input = user_input.lower()
+
+    if convert_upper:
+        user_input = user_input.upper()
+
     # Choix de la méthode de tokenization
     method = st.selectbox(
-        "Sélectionnez une méthode de tokenization:",
-        ("Tokenization de phrases", 
-         "Tokenization de mots (TreebankWordTokenizer)", 
-         "Tokenization avec ponctuation (WordPunctTokenizer)", 
-         "Tokenization avec expressions régulières",
-         "Suppression des mots vides (stop words)"))
+        "Select a tokenization method:",
+        ("Tokenization of text into sentences", 
+         "Tokenization of sentences into words (TreebankWordTokenizer)", 
+         "Tokenization by splitting punctuation (WordPunctTokenizer)", 
+         "Tokenization using regular expressions(regex)",
+         "Removing stop words"))
     
     # Exécution de la tokenization en fonction du choix de l'utilisateur
     if st.button("Tokenizer"):
-        if method == "Tokenization de phrases":
-            st.write(tokenize_sentences(user_input))
-        elif method == "Tokenization de mots (TreebankWordTokenizer)":
-            st.write(tokenize_with_treebank(user_input))
-        elif method == "Tokenization avec ponctuation (WordPunctTokenizer)":
-            st.write(tokenize_with_wordpunct(user_input))
-        elif method == "Tokenization avec expressions régulières":
-            st.write(tokenize_with_regex(user_input))
-        elif method == "Suppression des mots vides (stop words)":
-            st.write(remove_stopwords(user_input))
+        if method == "Tokenization of text into sentences":
+            st.write(tokenize_sentences(substitution(user_input)))
+        elif method == "Tokenization of sentences into words (TreebankWordTokenizer)":
+            st.write(tokenize_with_treebank(substitution(user_input)))
+        elif method == "Tokenization by splitting punctuation (WordPunctTokenizer)":
+            st.write(tokenize_with_wordpunct(substitution(user_input)))
+        elif method == "Tokenization using regular expressions(regex)":
+            st.write(tokenize_with_regex(substitution(user_input)))
+        elif method == "Removing stop words":
+            st.write(remove_stopwords(substitution(user_input),'english'))
 
 if __name__ == "__main__":
     main()
