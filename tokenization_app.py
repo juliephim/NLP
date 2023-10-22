@@ -74,7 +74,7 @@ def main():
     # Saisie de texte par l'utilisateur
     user_input = st.text_area("Entrez le texte à tokenizer:", "")
     
-    st.info("For information, the substitution was performing (RegexepReplacer)", icon="i")
+    st.info("For information, the substitution was performing (RegexepReplacer)", None)
 
     convert_lower = st.checkbox('Convertir en minuscules')
     convert_upper = st.checkbox('Convertir en majuscules')
