@@ -4,7 +4,7 @@ import re
 import nltk
 from os import listdir
 from nltk.corpus import stopwords, sentiwordnet as swn, wordnet as wn
-from pickle import dump
+
 
 
 nltk.download('sentiwordnet')
