@@ -72,12 +72,12 @@ def main():
     st.title("Tokenization avec NLTK")
     
     # Saisie de texte par l'utilisateur
-    user_input = st.text_area("Entrez le texte à tokenizer:", "")
+    user_input = st.text_area("Enter the text to tokenize:", "")
     
     st.info("For information, the substitution was performing (RegexepReplacer)")
 
-    convert_lower = st.checkbox('Convertir en minuscules')
-    convert_upper = st.checkbox('Convertir en majuscules')
+    convert_lower = st.checkbox('Convert to lowercase')
+    convert_upper = st.checkbox('Convert to uppercase')
 
     if convert_lower:
         user_input = user_input.lower()
