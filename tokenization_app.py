@@ -78,7 +78,7 @@ def main():
 
     if option == 'Tokenization':
         show_tokenization()
-    elif option == 'Onglet 2':
+    elif option == 'Lemmatization and Stemming':
         show_lemmatization()
     else:
         Similarity()
