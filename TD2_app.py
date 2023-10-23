@@ -105,6 +105,14 @@ def classify_reviews(scores, pos_threshold=0.2, neg_threshold=-0.2):
     
     return classifications
 
+# Function to process a single review
+def process_single_review(review):
+    tokens = clean_doc(review)
+    adverbs = extract_adverbs(tokens)
+    return ' '.join(adverbs)
+
+
+
 def main():
     st.title("Movie Review Sentiment Analysis")
 
@@ -136,56 +144,50 @@ if __name__ == '__main__':
 
 #### CODE TO NOT INCLUDE
 
-
-# Sample movie review
-sample_review = """The film was brilliantly directed and the actors performed superbly. 
-                   However, the plot moved incredibly slowly and the ending was sadly predictable."""
-
-# Function to process a single review
-def process_single_review(review):
-    tokens = clean_doc(review)
-    adverbs = extract_adverbs(tokens)
-    return ' '.join(adverbs)
-
-# Process and score the sample review
-processed_review = process_single_review(sample_review)
-sentiment_score = score_reviews([processed_review])[0]
-classification = classify_reviews([sentiment_score])[0]
-
-#-----------------------------------
-# Print the results
-print(f"Sample Review: {sample_review}\n")
-print(f"Processed Review (Adverbs): {processed_review}\n")
-print(f"Sentiment Score: {sentiment_score}\n")
-print(f"Classification: {classification}\n")
+# /*
+# # Sample movie review
+# sample_review = """The film was brilliantly directed and the actors performed superbly. 
+#                    However, the plot moved incredibly slowly and the ending was sadly predictable."""
 
 
+# #-----------------------------------
+# # Print the results
+# print(f"Sample Review: {sample_review}\n")
+# print(f"Processed Review (Adverbs): {processed_review}\n")
+# print(f"Sentiment Score: {sentiment_score}\n")
+# print(f"Classification: {classification}\n")
 
-#Code qui voit les performances de notre classifier avec le dataset polarity movie reviews
-# Load the dataset
-reviews, labels = load_clean_dataset(is_train=True)
-# Score the reviews
-sentiment_scores = score_reviews(reviews)
-# Classify the reviews based on their scores
-classifications = classify_reviews(sentiment_scores)
-# Convert classifications into numerical labels: Positive = 1, Negative = 0, Neutral = -1 (we'll ignore Neutral for accuracy)
-predicted_labels = [1 if c == "Positive" else 0 if c == "Negative" else -1 for c in classifications]
-# Remove Neutral reviews for accuracy calculation
-filtered_labels = [label for i, label in enumerate(labels) if predicted_labels[i] != -1]
-filtered_predictions = [pred for pred in predicted_labels if pred != -1]
-# Compute accuracy
-correct_predictions = sum(1 for true, pred in zip(filtered_labels, filtered_predictions) if true == pred)
-accuracy = correct_predictions / len(filtered_labels)
-# Print the accuracy
-print(f"For comparison, the classifier have a score of {accuracy * 100:.2f}% for the dataset polarity dataset.")
+# # Process and score the sample review
+# processed_review = process_single_review(sample_review)
+# sentiment_score = score_reviews([processed_review])[0]
+# classification = classify_reviews([sentiment_score])[0]
 
-# code pour voir les 5 premiers reviews de polarity movie review dataset, en comparaison avec notre classification basé sur le pos_tag et sentiwordnet
-# Load the dataset
-reviews, labels = load_clean_dataset(is_train=True)
-# Score the reviews
-sentiment_scores = score_reviews(reviews)
-# Classify the reviews based on their scores
-classifications = classify_reviews(sentiment_scores)
-# Print the first few reviews and their classifications
-for review, label, classification in zip(reviews[:17],labels[:17], classifications[:17]):
-    print(f"Review: {review}\n Labels:{label} Classification: {classification}\n")
+
+# #Code qui voit les performances de notre classifier avec le dataset polarity movie reviews
+# # Load the dataset
+# reviews, labels = load_clean_dataset(is_train=True)
+# # Score the reviews
+# sentiment_scores = score_reviews(reviews)
+# # Classify the reviews based on their scores
+# classifications = classify_reviews(sentiment_scores)
+# # Convert classifications into numerical labels: Positive = 1, Negative = 0, Neutral = -1 (we'll ignore Neutral for accuracy)
+# predicted_labels = [1 if c == "Positive" else 0 if c == "Negative" else -1 for c in classifications]
+# # Remove Neutral reviews for accuracy calculation
+# filtered_labels = [label for i, label in enumerate(labels) if predicted_labels[i] != -1]
+# filtered_predictions = [pred for pred in predicted_labels if pred != -1]
+# # Compute accuracy
+# correct_predictions = sum(1 for true, pred in zip(filtered_labels, filtered_predictions) if true == pred)
+# accuracy = correct_predictions / len(filtered_labels)
+# # Print the accuracy
+# print(f"For comparison, the classifier have a score of {accuracy * 100:.2f}% for the dataset polarity dataset.")
+
+# # code pour voir les 5 premiers reviews de polarity movie review dataset, en comparaison avec notre classification basé sur le pos_tag et sentiwordnet
+# # Load the dataset
+# reviews, labels = load_clean_dataset(is_train=True)
+# # Score the reviews
+# sentiment_scores = score_reviews(reviews)
+# # Classify the reviews based on their scores
+# classifications = classify_reviews(sentiment_scores)
+# # Print the first few reviews and their classifications
+# for review, label, classification in zip(reviews[:17],labels[:17], classifications[:17]):
+#     print(f"Review: {review}\n Labels:{label} Classification: {classification}\n")
