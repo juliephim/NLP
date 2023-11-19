@@ -204,70 +204,8 @@ def select_first_sentence_of_query(query_text):
     end_index = next((i for i, char in enumerate(query_text) if char in '.!?'), None)
     return query_text[:end_index + 1] if end_index is not None else query_text
 
-def select_first_sentence(dicReq, num_queries=10):
-    # Shuffle query IDs
-    query_ids = list(dicReq.keys())
-    random.shuffle(query_ids)
-    
-    # Select 10 random queries
-    selected_queries = query_ids[:num_queries]
-
-    # Extract the first sentence from each query
-    query_sentences = {}
-    for query_id in selected_queries:
-        query_text = dicReq[query_id]
-        # Find the index of the first ., !, or ?
-        end_index = next((i for i, char in enumerate(query_text) if char in '.!?'), None)
-        # Extract the first sentence or the whole text if no sentence-ending punctuation is found
-        first_sentence = query_text[:end_index + 1] if end_index is not None else query_text
-        query_sentences[query_id] = first_sentence.strip()
-    
-    return query_sentences
-
-def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgTop=5):
-    # Extract and display the first sentence of the query
-    first_sentence_query = select_first_sentence_of_query(dicReq[query_id])
-
-    print(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
-    
-    # Tokenize and vectorize the selected query
-    query_token_list = text3TokenList(dicReq[query_id])
-    query_vector = vectorize_text(query_token_list, word2vec_model)
-
-    # Prepare document token lists and vectors
-    corpusDocTokenList = [text3TokenList(doc) for doc in dicDoc.values()]
-    doc_vectors = [vectorize_text(doc, word2vec_model) for doc in corpusDocTokenList]
-
-    # Initialize BM25 with the document token lists
-    bm25 = BM25Okapi(corpusDocTokenList)
-
-    # Calculate BM25 and Word2Vec scores
-    bm25_scores = bm25.get_scores(query_token_list)
-    combined_scores = combined_score(bm25_scores, doc_vectors, query_vector)
-
-    # Calculate NDCG score
-    true_docs = np.zeros(len(corpusDocTokenList))
-    for docId, score in dicReqDoc.get(query_id, {}).items():
-        doc_index = list(dicDoc.keys()).index(docId)
-        true_docs[doc_index] = score
-    ndcg_score_value = ndcg_score([true_docs], [combined_scores], k=ndcgTop)
-    print(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}\n")
-
-    # Sort documents based on combined scores and select the top 10
-    sorted_doc_indices = np.argsort(combined_scores)[::-1][:ndcgTop]
-    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
-
-    # Print the ranking, ID, and content of the top 10 documents
-    for rank, doc_id in enumerate(top_docs, start=1):
-        content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
-        print(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
-    return ndcg_score_value
-
 # Fonction pour afficher le classement des documents pour une requête donnée
-def display_document_ranking(query_id):
-    #first_sentence_query = dicReq[query_id]
-
-    #st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
+"""def display_document_ranking(query_id):
 
     first_sentence_query = select_first_sentence_of_query(dicReq[query_id])
     st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
@@ -288,7 +226,36 @@ def display_document_ranking(query_id):
         doc_index = list(dicDoc.keys()).index(docId)
         true_docs[doc_index] = score
     ndcg_score_value = ndcg_score([true_docs], [combined_scores], 5)
-    #print(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}\n")
+    st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
+
+    sorted_doc_indices = np.argsort(combined_scores)[::-1][:5]
+    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
+
+    for rank, doc_id in enumerate(top_docs, start=1):
+        content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
+        st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
+"""
+# Fonction pour afficher le classement des documents pour une requête donnée
+def display_document_ranking(query_id):
+    first_sentence_query = select_first_sentence_of_query(dicReq[query_id])
+    st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
+    
+    query_token_list = text3TokenList(dicReq[query_id])
+    query_vector = vectorize_text(query_token_list, word2vec_model)
+
+    corpusDocTokenList = [text3TokenList(doc) for doc in dicDoc.values()]
+    doc_vectors = [vectorize_text(doc, word2vec_model) for doc in corpusDocTokenList]
+    bm25 = BM25Okapi(corpusDocTokenList)
+
+    bm25_scores = bm25.get_scores(query_token_list)
+    combined_scores = combined_score(bm25_scores, doc_vectors, query_vector)
+
+    # Calculate NDCG score
+    true_docs = np.zeros(len(corpusDocTokenList))
+    for docId, score in dicReqDoc.get(query_id, {}).items():
+        doc_index = list(dicDoc.keys()).index(docId)
+        true_docs[doc_index] = score
+    ndcg_score_value = ndcg_score([true_docs], [combined_scores], 5)
     st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
 
     sorted_doc_indices = np.argsort(combined_scores)[::-1][:5]
@@ -301,7 +268,7 @@ def display_document_ranking(query_id):
 # Fonction pour initialiser ou mettre à jour l'état de session
 def initialize_or_update_session_state():
     if 'random_queries' not in st.session_state:
-        random_queries = select_first_sentence(dicReq)
+        random_queries = select_first_sentence_of_query(dicReq)
         st.session_state.random_queries = random_queries
 
 # Function to update the session state with the selected query ID
@@ -314,21 +281,10 @@ st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
 # Initialiser ou mettre à jour l'état de session
 initialize_or_update_session_state()
 
-# Sélection aléatoire de 10 requêtes
-#random_queries = select_first_sentence(dicReq)
-#query_options = list(random_queries.keys())
-#selected_query = st.selectbox('Select a Query:', query_options)
-
-# Select and display 10 random queries
-#random_queries = select_first_sentence(dicReq)
-#query_options = list(random_queries.keys())
-# Session state to maintain the selected query across interactions
-#selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
-
-
 # Sélectionner une requête à partir de l'état de session
 query_options = list(st.session_state.random_queries.keys())
 selected_query = st.selectbox('Select a Query:', query_options)
 
 if st.button('Show Document Ranking'):
     display_document_ranking(selected_query)
+
