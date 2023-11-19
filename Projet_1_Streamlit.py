@@ -208,20 +208,130 @@ def run_bm25_with_word2vec(startDoc, endDoc):
 nb_docs = 3192 # Adjust as needed
 run_bm25_with_word2vec(0, nb_docs)
 
+def select_first_sentence(dicReq, num_queries=10):
+    # Shuffle query IDs
+    query_ids = list(dicReq.keys())
+    random.shuffle(query_ids)
+    
+    # Select 10 random queries
+    selected_queries = query_ids[:num_queries]
+
+    # Extract the first sentence from each query
+    query_sentences = {}
+    for query_id in selected_queries:
+        query_text = dicReq[query_id]
+        # Find the index of the first ., !, or ?
+        end_index = next((i for i, char in enumerate(query_text) if char in '.!?'), None)
+        # Extract the first sentence or the whole text if no sentence-ending punctuation is found
+        first_sentence = query_text[:end_index + 1] if end_index is not None else query_text
+        query_sentences[query_id] = first_sentence.strip()
+    
+    return query_sentences
+
+def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgTop=10):
+    # Extract and display the first sentence of the query
+    first_sentence_query = select_first_sentence(dicReq[query_id])
+    print(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
+
+    # Tokenize and vectorize the selected query
+    query_token_list = text3TokenList(dicReq[query_id])
+    query_vector = vectorize_text(query_token_list, word2vec_model)
+
+    # Prepare document token lists and vectors
+    corpusDocTokenList = [text3TokenList(doc) for doc in dicDoc.values()]
+    doc_vectors = [vectorize_text(doc, word2vec_model) for doc in corpusDocTokenList]
+
+    # Initialize BM25 with the document token lists
+    bm25 = BM25Okapi(corpusDocTokenList)
+
+    # Calculate BM25 and Word2Vec scores
+    bm25_scores = bm25.get_scores(query_token_list)
+    combined_scores = combined_score(bm25_scores, doc_vectors, query_vector)
+
+    # Calculate NDCG score
+    true_docs = np.zeros(len(corpusDocTokenList))
+    for docId, score in dicReqDoc.get(query_id, {}).items():
+        doc_index = list(dicDoc.keys()).index(docId)
+        true_docs[doc_index] = score
+    ndcg_score_value = ndcg_score([true_docs], [combined_scores], k=ndcgTop)
+    print(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}\n")
+
+    # Sort documents based on combined scores and select the top 10
+    sorted_doc_indices = np.argsort(combined_scores)[::-1][:ndcgTop]
+    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
+
+    # Print the ranking, ID, and content of the top 10 documents
+    for rank, doc_id in enumerate(top_docs, start=1):
+        content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
+        print(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
+
+# Example usage:
+# Replace 'PLAIN-2689' with an actual query ID from your dataset
+run_query_ranking('PLAIN-2689', dicDoc, dicReq, dicReqDoc, word2vec_model)
+
+
+# Example usage
+first_sentences = select_first_sentence(dicReq)
+for query_id, sentence in first_sentences.items():
+    print(f"Query ID: {query_id}\nFirst sentence:\n{sentence}\n")
+
+
 import streamlit as st
+import random
+
+
+
+# Chargement des données et du modèle
+dicDoc, dicReq, dicReqDoc = loadNFCorpus()
+word2vec_model = Word2Vec(corpus_for_word2vec, vector_size=100, window=7, min_count=1, epochs=10, workers=4)
+
+# Fonction pour afficher le classement des documents pour une requête donnée
+def display_document_ranking(query_id):
+    first_sentence_query = select_first_sentence(dicReq[query_id])
+
+    st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
+
+    query_token_list = text3TokenList(dicReq[query_id])
+    query_vector = vectorize_text(query_token_list, word2vec_model)
+
+    corpusDocTokenList = [text3TokenList(doc) for doc in dicDoc.values()]
+    doc_vectors = [vectorize_text(doc, word2vec_model) for doc in corpusDocTokenList]
+    bm25 = BM25Okapi(corpusDocTokenList)
+
+    bm25_scores = bm25.get_scores(query_token_list)
+    combined_scores = combined_score(bm25_scores, doc_vectors, query_vector)
+
+    sorted_doc_indices = np.argsort(combined_scores)[::-1][:10]
+    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
+
+    for rank, doc_id in enumerate(top_docs, start=1):
+        content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
+        st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
 
 # Interface Streamlit
-st.title("Système de Récupération de Documents Médicaux")
+st.title('Document Ranking System')
+
+# Sélection aléatoire de 10 requêtes
+random_queries = select_first_sentence(dicReq)
+query_options = list(random_queries.keys())
+selected_query = st.selectbox('Select a Query:', query_options)
+
+if st.button('Show Document Ranking'):
+    display_document_ranking(selected_query)
+
+
+# Interface Streamlit
+#st.title("Système de Récupération de Documents Médicaux")
 
 # Résumé du modèle
-st.write("Résumé du Modèle: ... (Ajoutez votre résumé de modèle ici)")
+#st.write("Résumé du Modèle: ... (Ajoutez votre résumé de modèle ici)")
 
 # Entrée de l'utilisateur pour une requête personnalisée
-user_query = st.text_input("Entrez votre requête médicale", "")
+#user_query = st.text_input("Entrez votre requête médicale", "")
 
 # Choix parmi des requêtes prédéfinies
-selected_query = st.selectbox("Ou sélectionnez une requête prédéfinie", list(dicReq.values()))
+#selected_query = st.selectbox("Ou sélectionnez une requête prédéfinie", list(dicReq.values()))
 
 # Traitement des requêtes et affichage des résultats
-if st.button("Rechercher"):
-    query_to_use = user_query if user_query else selected_query
+#if st.button("Rechercher"):
+#    query_to_use = user_query if user_query else selected_query
