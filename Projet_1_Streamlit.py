@@ -260,6 +260,7 @@ def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgT
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
         print(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
+    return ndcg_score_value
 
 # Fonction pour afficher le classement des documents pour une requête donnée
 def display_document_ranking(query_id):
