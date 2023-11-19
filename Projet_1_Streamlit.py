@@ -181,5 +181,5 @@ initialize_session_state_with_random_queries()
 query_options = list(st.session_state.random_queries.keys())
 selected_query = st.selectbox('Select a Query :', query_options, on_change=update_selected_query_id)
 
-if st.button('Show TOP 5 Document Ranking'):
+if st.button('🔝5️⃣Show TOP 5 Document Ranking'):
     display_document_ranking(selected_query)
