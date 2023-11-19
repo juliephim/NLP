@@ -191,6 +191,13 @@ def run_bm25_with_word2vec(startDoc, endDoc):
     print("Combined NDCG score =", ndcgCumul)
     return ndcgCumul
 
+# [Place your code for loading the NFCorpus here]
+dicDoc, dicReq, dicReqDoc = loadNFCorpus()
+# Prepare the corpus for Word2Vec training
+corpus_for_word2vec = [text2TokenList(doc) for doc in dicDoc.values()]
+# Train the Word2Vec model
+word2vec_model = Word2Vec(corpus_for_word2vec, vector_size=100, window=7, min_count=1, epochs=10, workers=4)
+
 # Fonction modifiée pour sélectionner la première phrase d'une requête spécifique
 def select_first_sentence_of_query(query_text):
     end_index = next((i for i, char in enumerate(query_text) if char in '.!?'), None)
@@ -253,13 +260,6 @@ def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgT
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
         print(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
-
-# [Place your code for loading the NFCorpus here]
-dicDoc, dicReq, dicReqDoc = loadNFCorpus()
-# Prepare the corpus for Word2Vec training
-corpus_for_word2vec = [text2TokenList(doc) for doc in dicDoc.values()]
-# Train the Word2Vec model
-word2vec_model = Word2Vec(corpus_for_word2vec, vector_size=100, window=7, min_count=1, epochs=10, workers=4)
 
 # Fonction pour afficher le classement des documents pour une requête donnée
 def display_document_ranking(query_id):
