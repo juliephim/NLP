@@ -1,1 +1,7 @@
+numpy
 nltk
+collections
+sklearn
+gensim
+rank_bm25
+string
