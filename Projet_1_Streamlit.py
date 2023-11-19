@@ -248,14 +248,17 @@ def display_document_ranking(query_id):
     bm25 = BM25Okapi(corpusDocTokenList)
 
     bm25_scores = bm25.get_scores(query_token_list)
+     # Calcul des scores combinés (BM25 + Word2Vec)
     combined_scores = combined_score(bm25_scores, doc_vectors, query_vector)
 
-    # Calculate NDCG score
+    # Préparation des scores de vérité
     true_docs = np.zeros(len(corpusDocTokenList))
     for docId, score in dicReqDoc.get(query_id, {}).items():
         doc_index = list(dicDoc.keys()).index(docId)
         true_docs[doc_index] = score
-    ndcg_score_value = ndcg_score([true_docs], [combined_scores], 5)
+
+    # Calcul du score NDCG
+    ndcg_score_value = ndcg_score([true_docs], [combined_scores], k=5)
     st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
 
     sorted_doc_indices = np.argsort(combined_scores)[::-1][:5]
