@@ -239,9 +239,9 @@ def display_document_ranking(query_id):
 
 # Fonction pour initialiser ou mettre à jour l'état de session
 def initialize_or_update_session_state():
-    if 'random_queries' not in st.session_state:
-        random_queries = select_first_sentence_of_query(dicReq)
-        st.session_state.random_queries = random_queries
+    if 'selected_queries' not in st.session_state:
+        selected_queries = select_first_sentence_of_query(dicReq)
+        st.session_state.selected_queries = selected_queries
 
 # Function to update the session state with the selected query ID
 def update_selected_query_id():
