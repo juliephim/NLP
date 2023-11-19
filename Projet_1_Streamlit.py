@@ -281,12 +281,17 @@ def display_document_ranking(query_id):
     bm25_scores = bm25.get_scores(query_token_list)
     combined_scores = combined_score(bm25_scores, doc_vectors, query_vector)
 
-    sorted_doc_indices = np.argsort(combined_scores)[::-1][:10]
-    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
-
-    # Add NDCG score display
-    ndcg_score_value = run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model)
+    # Calculate NDCG score
+    true_docs = np.zeros(len(corpusDocTokenList))
+    for docId, score in dicReqDoc.get(query_id, {}).items():
+        doc_index = list(dicDoc.keys()).index(docId)
+        true_docs[doc_index] = score
+    ndcg_score_value = ndcg_score([true_docs], [combined_scores], 5)
+    #print(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}\n")
     st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
+
+    sorted_doc_indices = np.argsort(combined_scores)[::-1][:5]
+    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
 
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
