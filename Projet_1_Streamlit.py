@@ -206,3 +206,21 @@ def run_bm25_with_word2vec(startDoc, endDoc):
 # Run the combined model
 nb_docs = 3192 # Adjust as needed
 run_bm25_with_word2vec(0, nb_docs)
+
+import streamlit as st
+
+# Interface Streamlit
+st.title("Système de Récupération de Documents Médicaux")
+
+# Résumé du modèle
+st.write("Résumé du Modèle: ... (Ajoutez votre résumé de modèle ici)")
+
+# Entrée de l'utilisateur pour une requête personnalisée
+user_query = st.text_input("Entrez votre requête médicale", "")
+
+# Choix parmi des requêtes prédéfinies
+selected_query = st.selectbox("Ou sélectionnez une requête prédéfinie", list(dicReq.values()))
+
+# Traitement des requêtes et affichage des résultats
+if st.button("Rechercher"):
+    query_to_use = user_query if user_query else selected_query
