@@ -179,7 +179,7 @@ initialize_session_state_with_random_queries()
 
 # Sélectionner une requête à partir de l'état de session
 query_options = list(st.session_state.random_queries.keys())
-selected_query = st.selectbox('Select a Query : ', query_options, on_change=update_selected_query_id)
+selected_query = st.selectbox('Select a Query (Among a list of 10 randomly selected queries) : ', query_options, on_change=update_selected_query_id)
 
 # Créer trois colonnes
 col1, col2, col3 = st.columns([1,2,1])
