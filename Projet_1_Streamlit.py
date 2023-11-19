@@ -276,17 +276,46 @@ def display_document_ranking(query_id):
     sorted_doc_indices = np.argsort(combined_scores)[::-1][:10]
     top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
 
+    # Add NDCG score display
+    ndcg_score_value = run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model)
+    st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
+
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
         st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
 
+# Function to initialize the session state
+def initialize_session_state():
+    if 'selected_query_id' not in st.session_state:
+        st.session_state.selected_query_id = None
+
+# Function to update the session state with the selected query ID
+def update_selected_query_id():
+    st.session_state.selected_query_id = selected_query
+
 # Interface Streamlit
 st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
 
+# Initialize the session state
+initialize_session_state()
+
 # Sélection aléatoire de 10 requêtes
+#random_queries = select_first_sentence(dicReq)
+#query_options = list(random_queries.keys())
+#selected_query = st.selectbox('Select a Query:', query_options)
+
+# Select and display 10 random queries
 random_queries = select_first_sentence(dicReq)
 query_options = list(random_queries.keys())
-selected_query = st.selectbox('Select a Query:', query_options)
+# Session state to maintain the selected query across interactions
+selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
+
+if st.session_state.selected_query_id:
+    selected_query = st.session_state.selected_query_id
 
 if st.button('Show Document Ranking'):
     display_document_ranking(selected_query)
+
+# Ensure that the session state is updated when a new query is selected
+if 'selected_query_id' not in st.session_state:
+    st.session_state.selected_query_id = query_options[0]
