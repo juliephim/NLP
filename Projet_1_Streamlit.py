@@ -29,10 +29,9 @@ import string
 def loadNFCorpus():
 
     # Define the directory where the data is located.
-    #dir = "./project1/"
+    dir = r"C:/Users/phimj/OneDrive/Documents/GitHub/NLP/"
     # Load the document data which contains abstracts from PubMed.
-    #filename = dir + "dev.docs"
-    filename = "dev.docs"
+    filename = dir + "dev.docs"
     # Initialize a dictionary to store document data.
     dicDoc = {}
     # Read document lines and split them into a dictionary with key as document ID and value as text.
@@ -45,8 +44,7 @@ def loadNFCorpus():
         dicDoc[key] = value
     
     # Load and parse the query data similar to document data.
-    #filename = dir + "dev.all.queries"
-    filename = "dev.all.queries"
+    filename = dir + "dev.all.queries"
     dicReq = {}
     with open(filename, encoding='utf-8') as file:
         lines = file.readlines()
@@ -57,8 +55,7 @@ def loadNFCorpus():
         dicReq[key] = value
     
     # Load the relevance judgments which provide a relevance score for document-query pairs.
-    #filename = dir + "dev.2-1-0.qrel"
-    filename = "dev.2-1-0.qrel"
+    filename = dir + "dev.2-1-0.qrel"
     dicReqDoc = defaultdict(dict)
     with open(filename) as file:
         lines = file.readlines()
