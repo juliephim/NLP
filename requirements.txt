@@ -1,6 +1,3 @@
+sklearn
 numpy
 nltk
-collections
-gensim
-rank_bm25
-scikit-learn
