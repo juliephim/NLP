@@ -19,10 +19,10 @@ from rank_bm25 import BM25Okapi
 import string
 
 # Download the stopwords dataset and the punkt tokenizer model from NLTK, which will be used for tokenization and stop word removal.
-#nltk.download('stopwords')
-#nltk.download('punkt')
-#nltk.download('averaged_perceptron_tagger')
-#nltk.download('wordnet')
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 
 
 # Define a function to load the NFCorpus data from the cloned GitHub repository.
