@@ -204,6 +204,7 @@ def select_first_sentence_of_query(query_text):
     end_index = next((i for i, char in enumerate(query_text) if char in '.!?'), None)
     return query_text[:end_index + 1] if end_index is not None else query_text
 
+
 # Fonction pour afficher le classement des documents pour une requête donnée
 def display_document_ranking(query_id):
 
@@ -271,9 +272,6 @@ st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
 #query_options = list(st.session_state.selected_queries.keys())
 # Sélectionner une requête à partir de l'état de session
 #selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
-
-# Interface Streamlit
-st.title('Document Ranking System')
 
 # Initialiser l'état de session avec des requêtes aléatoires
 initialize_session_state_with_random_queries()
