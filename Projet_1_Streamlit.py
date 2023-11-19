@@ -1,5 +1,4 @@
 # Import necessary libraries for data handling and text processing.
-#import urllib.request as re
 import numpy as np
 from collections import defaultdict
 
@@ -8,28 +7,26 @@ from nltk.corpus import stopwords
 from nltk.tokenize import TreebankWordTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
 
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import ndcg_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from gensim.models import Word2Vec
 from rank_bm25 import BM25Okapi
 
+import streamlit as st
+import random
 import string
+
 
 # Download the stopwords dataset and the punkt tokenizer model from NLTK, which will be used for tokenization and stop word removal.
 nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
-
 
 # Define a function to load the NFCorpus data from the cloned GitHub repository.
 def loadNFCorpus():
 
     # Define the directory where the data is located.
-    #dir = r"C:/Users/phimj/OneDrive/Documents/GitHub/NLP/"
     dir = './'
     # Load the document data which contains abstracts from PubMed.
     filename = dir + "dev.docs"
@@ -81,7 +78,7 @@ def text2TokenList(text):
     text = text.translate(str.maketrans('', '', string.punctuation))
     # Tokenize text using TreebankWordTokenizer
     word_tokens = tokenizer.tokenize(text.lower())
-    # Lemmatization with POS tagging
+    # Lemmatization
     word_tokens_lemmatized = [lemmatizer.lemmatize(word) for word in word_tokens]
     # Remove stopwords and filter out short tokens
     word_tokens_final = [word for word in word_tokens_lemmatized if word not in stop_words and len(word) > 2]
@@ -110,17 +107,7 @@ def vectorize_text(text, model):
     vectors = [model.wv[word] for word in text if word in model.wv]
     return np.mean(vectors, axis=0) if vectors else np.zeros(model.vector_size)
 
-# [Place your code for loading the NFCorpus here]
-dicDoc, dicReq, dicReqDoc = loadNFCorpus()
-
-# Prepare the corpus for Word2Vec training
-corpus_for_word2vec = [text2TokenList(doc) for doc in dicDoc.values()]
-
-# Train the Word2Vec model
-word2vec_model = Word2Vec(corpus_for_word2vec, vector_size=100, window=7, min_count=1, epochs=10, workers=4)
-
 # Define a function to combine BM25 and Word2Vec scores
-from sklearn.metrics.pairwise import cosine_similarity
 def combined_score(bm25_scores, doc_vectors, query_vector, alpha=0.2):
     cosine_similarities = [cosine_similarity([dv], [query_vector])[0][0] for dv in doc_vectors]
     combined_scores = alpha * np.array(bm25_scores) + (1 - alpha) * np.array(cosine_similarities)
@@ -204,9 +191,6 @@ def run_bm25_with_word2vec(startDoc, endDoc):
     print("Combined NDCG score =", ndcgCumul)
     return ndcgCumul
 
-# Run the combined model
-#nb_docs = 3192 # Adjust as needed
-#run_bm25_with_word2vec(0, nb_docs)
 
 def select_first_sentence(dicReq, num_queries=10):
     # Shuffle query IDs
@@ -266,24 +250,11 @@ def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgT
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
         print(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
 
-# Example usage:
-# Replace 'PLAIN-2689' with an actual query ID from your dataset
-#run_query_ranking('PLAIN-2689', dicDoc, dicReq, dicReqDoc, word2vec_model)
-
-
-# Example usage
-#first_sentences = select_first_sentence(dicReq)
-#for query_id, sentence in first_sentences.items():
-#    print(f"Query ID: {query_id}\nFirst sentence:\n{sentence}\n")
-
-
-import streamlit as st
-import random
-
-
-
-# Chargement des données et du modèle
+# [Place your code for loading the NFCorpus here]
 dicDoc, dicReq, dicReqDoc = loadNFCorpus()
+# Prepare the corpus for Word2Vec training
+corpus_for_word2vec = [text2TokenList(doc) for doc in dicDoc.values()]
+# Train the Word2Vec model
 word2vec_model = Word2Vec(corpus_for_word2vec, vector_size=100, window=7, min_count=1, epochs=10, workers=4)
 
 # Fonction pour afficher le classement des documents pour une requête donnée
@@ -310,7 +281,7 @@ def display_document_ranking(query_id):
         st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
 
 # Interface Streamlit
-st.title('Document Ranking System')
+st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
 
 # Sélection aléatoire de 10 requêtes
 random_queries = select_first_sentence(dicReq)
@@ -319,20 +290,3 @@ selected_query = st.selectbox('Select a Query:', query_options)
 
 if st.button('Show Document Ranking'):
     display_document_ranking(selected_query)
-
-
-# Interface Streamlit
-#st.title("Système de Récupération de Documents Médicaux")
-
-# Résumé du modèle
-#st.write("Résumé du Modèle: ... (Ajoutez votre résumé de modèle ici)")
-
-# Entrée de l'utilisateur pour une requête personnalisée
-#user_query = st.text_input("Entrez votre requête médicale", "")
-
-# Choix parmi des requêtes prédéfinies
-#selected_query = st.selectbox("Ou sélectionnez une requête prédéfinie", list(dicReq.values()))
-
-# Traitement des requêtes et affichage des résultats
-#if st.button("Rechercher"):
-#    query_to_use = user_query if user_query else selected_query
