@@ -287,7 +287,7 @@ word2vec_model = Word2Vec(corpus_for_word2vec, vector_size=100, window=7, min_co
 
 # Fonction pour afficher le classement des documents pour une requête donnée
 def display_document_ranking(query_id):
-    first_sentence_query = select_first_sentence(dicReq[query_id])
+     first_sentence_query = dicReq[query_id]
 
     st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
 
