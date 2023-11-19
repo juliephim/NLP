@@ -212,7 +212,7 @@ def select_first_sentence(dicReq, num_queries=10):
     
     return query_sentences
 
-def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgTop=10):
+def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgTop=5):
     # Extract and display the first sentence of the query
     first_sentence_query = select_first_sentence(dicReq[query_id])
 
