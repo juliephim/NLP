@@ -205,8 +205,8 @@ def run_bm25_with_word2vec(startDoc, endDoc):
     return ndcgCumul
 
 # Run the combined model
-nb_docs = 3192 # Adjust as needed
-run_bm25_with_word2vec(0, nb_docs)
+#nb_docs = 3192 # Adjust as needed
+#run_bm25_with_word2vec(0, nb_docs)
 
 def select_first_sentence(dicReq, num_queries=10):
     # Shuffle query IDs
@@ -267,13 +267,13 @@ def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgT
 
 # Example usage:
 # Replace 'PLAIN-2689' with an actual query ID from your dataset
-run_query_ranking('PLAIN-2689', dicDoc, dicReq, dicReqDoc, word2vec_model)
+#run_query_ranking('PLAIN-2689', dicDoc, dicReq, dicReqDoc, word2vec_model)
 
 
 # Example usage
-first_sentences = select_first_sentence(dicReq)
-for query_id, sentence in first_sentences.items():
-    print(f"Query ID: {query_id}\nFirst sentence:\n{sentence}\n")
+#first_sentences = select_first_sentence(dicReq)
+#for query_id, sentence in first_sentences.items():
+#    print(f"Query ID: {query_id}\nFirst sentence:\n{sentence}\n")
 
 
 import streamlit as st
