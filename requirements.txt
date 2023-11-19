@@ -5,3 +5,6 @@ collections
 gensim
 rank_bm25
 string
+streamlit
+pandas
+scikit-learn
