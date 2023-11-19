@@ -129,8 +129,7 @@ def select_first_sentence_of_query(query_text):
 def display_document_ranking(query_id):
 
     first_sentence_query = select_first_sentence_of_query(dicReq[query_id])
-    st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
-    st.markdown(f"**Query ID**: `{query_id}`\n**First sentence**:\n> {first_sentence_query}\n")
+    st.markdown(f"**Query ID**: `{query_id}`\n\n**First sentence**:\n> {first_sentence_query}\n")
     
     query_token_list = text3TokenList(dicReq[query_id])
     query_vector = vectorize_text(query_token_list, word2vec_model)
@@ -153,13 +152,11 @@ def display_document_ranking(query_id):
 
     # Calcul du score NDCG
     ndcg_score_value = ndcg_score([true_docs], [combined_scores], k=5)
-    st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
     st.markdown(f"**NDCG Score for query** `{query_id}`: `{ndcg_score_value:.4f}`")
 
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
-        st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
-        st.markdown(f"**{rank}. Document ID**: `{doc_id}`\n**Content preview**:\n{content_preview}\n")
+        st.markdown(f"**{rank}. Document ID**: `{doc_id}`\n\n**Content preview**:\n{content_preview}\n")
 
 # Fonction pour initialiser l'état de session avec des requêtes aléatoires
 def initialize_session_state_with_random_queries():
@@ -182,7 +179,7 @@ initialize_session_state_with_random_queries()
 
 # Sélectionner une requête à partir de l'état de session
 query_options = list(st.session_state.random_queries.keys())
-selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
+selected_query = st.selectbox('Select a Query :', query_options, on_change=update_selected_query_id)
 
-if st.button('Show Document Ranking'):
+if st.button('Show TOP 5 Document Ranking'):
     display_document_ranking(selected_query)
