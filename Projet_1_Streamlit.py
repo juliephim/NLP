@@ -253,9 +253,16 @@ st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
 # Initialiser ou mettre à jour l'état de session
 initialize_or_update_session_state()
 
+#Select and display 10 random queries
+num_queries=10
+query_ids = list(dicReq.keys())
+random.shuffle(query_ids)
+selected_queries = query_ids[:num_queries]
+#Session state to maintain the selected query across interactions
+query_options = list(v.selected_queries.keys())
 # Sélectionner une requête à partir de l'état de session
-query_options = list(st.session_state.random_queries.keys())
-selected_query = st.selectbox('Select a Query:', query_options)
+selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
+
 
 if st.button('Show Document Ranking'):
     display_document_ranking(selected_query)
