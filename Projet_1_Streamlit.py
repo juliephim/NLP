@@ -85,7 +85,6 @@ def text2TokenList(text):
     word_tokens_final = [word for word in word_tokens_lemmatized if word not in stop_words and len(word) > 2]
     return word_tokens_final
 
-
 def text3TokenList(text, top_n=27):
     # First, get word-level tokens
     word_tokens = text2TokenList(text)
@@ -126,12 +125,12 @@ def select_first_sentence_of_query(query_text):
     end_index = next((i for i, char in enumerate(query_text) if char in '.!?'), None)
     return query_text[:end_index + 1] if end_index is not None else query_text
 
-
 # Fonction pour afficher le classement des documents pour une requête donnée
 def display_document_ranking(query_id):
 
     first_sentence_query = select_first_sentence_of_query(dicReq[query_id])
     st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
+    st.markdown(f"**Query ID**: `{query_id}`\n**First sentence**:\n> {first_sentence_query}\n")
     
     query_token_list = text3TokenList(dicReq[query_id])
     query_vector = vectorize_text(query_token_list, word2vec_model)
@@ -155,16 +154,12 @@ def display_document_ranking(query_id):
     # Calcul du score NDCG
     ndcg_score_value = ndcg_score([true_docs], [combined_scores], k=5)
     st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
+    st.markdown(f"**NDCG Score for query** `{query_id}`: `{ndcg_score_value:.4f}`")
 
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
         st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
-
-# Fonction pour initialiser ou mettre à jour l'état de session
-#def initialize_or_update_session_state():
-    #if 'selected_queries' not in st.session_state:
-        #selected_queries = select_first_sentence_of_query(dicReq)
-        #st.session_state.selected_queries = selected_queries
+        st.markdown(f"**{rank}. Document ID**: `{doc_id}`\n**Content preview**:\n{content_preview}\n")
 
 # Fonction pour initialiser l'état de session avec des requêtes aléatoires
 def initialize_session_state_with_random_queries():
@@ -181,19 +176,6 @@ def update_selected_query_id():
 
 # Interface Streamlit
 st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
-
-# Initialiser ou mettre à jour l'état de session
-#initialize_or_update_session_state()
-
-#Select and display 10 random queries
-#num_queries=10
-#query_ids = list(dicReq.keys())
-#random.shuffle(query_ids)
-#selected_queries = query_ids[:num_queries]
-#Session state to maintain the selected query across interactions
-#query_options = list(st.session_state.selected_queries.keys())
-# Sélectionner une requête à partir de l'état de session
-#selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
 
 # Initialiser l'état de session avec des requêtes aléatoires
 initialize_session_state_with_random_queries()
