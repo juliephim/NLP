@@ -172,7 +172,7 @@ def update_selected_query_id():
     st.session_state.selected_query_id = selected_query
 
 # Interface Streamlit
-st.title('Information Retrieval : Top 5 ranking Medical Document for NFCorpus')
+st.title('⚕️Information Retrieval : Top 5 ranking Medical Document for NFCorpus')
 
 # Initialiser l'état de session avec des requêtes aléatoires
 initialize_session_state_with_random_queries()
