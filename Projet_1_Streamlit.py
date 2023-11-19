@@ -238,10 +238,19 @@ def display_document_ranking(query_id):
         st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
 
 # Fonction pour initialiser ou mettre à jour l'état de session
-def initialize_or_update_session_state():
-    if 'selected_queries' not in st.session_state:
-        selected_queries = select_first_sentence_of_query(dicReq)
-        st.session_state.selected_queries = selected_queries
+#def initialize_or_update_session_state():
+    #if 'selected_queries' not in st.session_state:
+        #selected_queries = select_first_sentence_of_query(dicReq)
+        #st.session_state.selected_queries = selected_queries
+
+# Fonction pour initialiser l'état de session avec des requêtes aléatoires
+def initialize_session_state_with_random_queries():
+    if 'random_queries' not in st.session_state:
+        # Sélection aléatoire de 10 requêtes
+        query_ids = list(dicReq.keys())
+        random.shuffle(query_ids)
+        selected_queries = query_ids[:10]
+        st.session_state.random_queries = {qid: dicReq[qid] for qid in selected_queries}
 
 # Function to update the session state with the selected query ID
 def update_selected_query_id():
@@ -251,19 +260,27 @@ def update_selected_query_id():
 st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
 
 # Initialiser ou mettre à jour l'état de session
-initialize_or_update_session_state()
+#initialize_or_update_session_state()
 
 #Select and display 10 random queries
-num_queries=10
-query_ids = list(dicReq.keys())
-random.shuffle(query_ids)
-selected_queries = query_ids[:num_queries]
+#num_queries=10
+#query_ids = list(dicReq.keys())
+#random.shuffle(query_ids)
+#selected_queries = query_ids[:num_queries]
 #Session state to maintain the selected query across interactions
-query_options = list(st.session_state.selected_queries.keys())
+#query_options = list(st.session_state.selected_queries.keys())
 # Sélectionner une requête à partir de l'état de session
-selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
+#selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
 
+# Interface Streamlit
+st.title('Document Ranking System')
+
+# Initialiser l'état de session avec des requêtes aléatoires
+initialize_session_state_with_random_queries()
+
+# Sélectionner une requête à partir de l'état de session
+query_options = list(st.session_state.random_queries.keys())
+selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
 
 if st.button('Show Document Ranking'):
     display_document_ranking(selected_query)
-
