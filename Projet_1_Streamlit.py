@@ -29,7 +29,8 @@ import string
 def loadNFCorpus():
 
     # Define the directory where the data is located.
-    dir = r"C:/Users/phimj/OneDrive/Documents/GitHub/NLP/"
+    #dir = r"C:/Users/phimj/OneDrive/Documents/GitHub/NLP/"
+    dir = './'
     # Load the document data which contains abstracts from PubMed.
     filename = dir + "dev.docs"
     # Initialize a dictionary to store document data.
