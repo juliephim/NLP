@@ -231,8 +231,9 @@ def select_first_sentence(dicReq, num_queries=10):
 def run_query_ranking(query_id, dicDoc, dicReq, dicReqDoc, word2vec_model, ndcgTop=10):
     # Extract and display the first sentence of the query
     first_sentence_query = select_first_sentence(dicReq[query_id])
-    print(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
 
+    print(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
+    
     # Tokenize and vectorize the selected query
     query_token_list = text3TokenList(dicReq[query_id])
     query_vector = vectorize_text(query_token_list, word2vec_model)
@@ -287,10 +288,10 @@ word2vec_model = Word2Vec(corpus_for_word2vec, vector_size=100, window=7, min_co
 
 # Fonction pour afficher le classement des documents pour une requête donnée
 def display_document_ranking(query_id):
-     first_sentence_query = dicReq[query_id]
+    first_sentence_query = dicReq[query_id]
 
     st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
-
+    
     query_token_list = text3TokenList(dicReq[query_id])
     query_vector = vectorize_text(query_token_list, word2vec_model)
 
