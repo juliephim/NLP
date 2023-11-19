@@ -206,6 +206,7 @@ def select_first_sentence_of_query(query_text):
 
 # Fonction pour afficher le classement des documents pour une requête donnée
 def display_document_ranking(query_id):
+
     first_sentence_query = select_first_sentence_of_query(dicReq[query_id])
     st.write(f"Query ID: {query_id}\nFirst sentence:\n{first_sentence_query}\n")
     
@@ -217,7 +218,6 @@ def display_document_ranking(query_id):
     bm25 = BM25Okapi(corpusDocTokenList)
 
     bm25_scores = bm25.get_scores(query_token_list)
-     # Calcul des scores combinés (BM25 + Word2Vec)
     combined_scores = combined_score(bm25_scores, doc_vectors, query_vector)
 
     # Préparation des scores de vérité
@@ -225,13 +225,13 @@ def display_document_ranking(query_id):
     for docId, score in dicReqDoc.get(query_id, {}).items():
         doc_index = list(dicDoc.keys()).index(docId)
         true_docs[doc_index] = score
+    
+    sorted_doc_indices = np.argsort(combined_scores)[::-1][:5]
+    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
 
     # Calcul du score NDCG
     ndcg_score_value = ndcg_score([true_docs], [combined_scores], k=5)
     st.write(f"NDCG Score for query '{query_id}': {ndcg_score_value:.4f}")
-
-    sorted_doc_indices = np.argsort(combined_scores)[::-1][:5]
-    top_docs = [(list(dicDoc.keys())[index]) for index in sorted_doc_indices]
 
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
