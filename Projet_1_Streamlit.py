@@ -291,10 +291,11 @@ def display_document_ranking(query_id):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
         st.write(f"{rank}. Document ID: {doc_id}\nContent preview:\n{content_preview}\n")
 
-# Function to initialize the session state
-def initialize_session_state():
-    if 'selected_query_id' not in st.session_state:
-        st.session_state.selected_query_id = None
+# Fonction pour initialiser ou mettre à jour l'état de session
+def initialize_or_update_session_state():
+    if 'random_queries' not in st.session_state:
+        random_queries = select_first_sentence(dicReq)
+        st.session_state.random_queries = random_queries
 
 # Function to update the session state with the selected query ID
 def update_selected_query_id():
@@ -303,8 +304,8 @@ def update_selected_query_id():
 # Interface Streamlit
 st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
 
-# Initialize the session state
-initialize_session_state()
+# Initialiser ou mettre à jour l'état de session
+initialize_or_update_session_state()
 
 # Sélection aléatoire de 10 requêtes
 #random_queries = select_first_sentence(dicReq)
@@ -312,17 +313,15 @@ initialize_session_state()
 #selected_query = st.selectbox('Select a Query:', query_options)
 
 # Select and display 10 random queries
-random_queries = select_first_sentence(dicReq)
-query_options = list(random_queries.keys())
+#random_queries = select_first_sentence(dicReq)
+#query_options = list(random_queries.keys())
 # Session state to maintain the selected query across interactions
-selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
+#selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
 
-if st.session_state.selected_query_id:
-    selected_query = st.session_state.selected_query_id
+
+# Sélectionner une requête à partir de l'état de session
+query_options = list(st.session_state.random_queries.keys())
+selected_query = st.selectbox('Select a Query:', query_options)
 
 if st.button('Show Document Ranking'):
     display_document_ranking(selected_query)
-
-# Ensure that the session state is updated when a new query is selected
-if 'selected_query_id' not in st.session_state:
-    st.session_state.selected_query_id = query_options[0]
