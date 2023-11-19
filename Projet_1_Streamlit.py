@@ -156,7 +156,7 @@ def display_document_ranking(query_id):
 
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
-        st.markdown(f"**{rank}. Document ID**: `{doc_id}`\n\n**Content preview**:\n{content_preview}\n")
+        st.markdown(f"<span style='font-size: 20px;'>**{rank}. Document ID**: `{doc_id}`\n\n**Content preview**:\n{content_preview}\n")
 
 # Fonction pour initialiser l'état de session avec des requêtes aléatoires
 def initialize_session_state_with_random_queries():
