@@ -156,7 +156,7 @@ def display_document_ranking(query_id):
 
     for rank, doc_id in enumerate(top_docs, start=1):
         content_preview = ' '.join((corpusDocTokenList[list(dicDoc.keys()).index(doc_id)])[:100])
-        st.markdown(f"<span style='font-size: 20px;'>**{rank}. Document ID**: `{doc_id}`\n\n**Content preview**:\n{content_preview}\n")
+        st.markdown(f"<span style='font-size: 20px;'>**{rank}. Document ID**: `{doc_id}`</span>\n\n**Content preview**:\n{content_preview}\n", unsafe_allow_html=True)
 
 # Fonction pour initialiser l'état de session avec des requêtes aléatoires
 def initialize_session_state_with_random_queries():
@@ -172,7 +172,7 @@ def update_selected_query_id():
     st.session_state.selected_query_id = selected_query
 
 # Interface Streamlit
-st.title('Information Retrieval : Top 10 ranking Medical Document for NFCorpus')
+st.title('Information Retrieval : Top 5 ranking Medical Document for NFCorpus')
 
 # Initialiser l'état de session avec des requêtes aléatoires
 initialize_session_state_with_random_queries()
