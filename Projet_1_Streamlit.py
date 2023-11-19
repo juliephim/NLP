@@ -259,7 +259,7 @@ query_ids = list(dicReq.keys())
 random.shuffle(query_ids)
 selected_queries = query_ids[:num_queries]
 #Session state to maintain the selected query across interactions
-query_options = list(v.selected_queries.keys())
+query_options = list(st.session_state.selected_queries.keys())
 # Sélectionner une requête à partir de l'état de session
 selected_query = st.selectbox('Select a Query:', query_options, on_change=update_selected_query_id)
 
