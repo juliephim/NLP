@@ -2,4 +2,6 @@ scikit-learn
 numpy
 nltk
 gensim
+rank_bm25
+string
 streamlit
