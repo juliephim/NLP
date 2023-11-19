@@ -22,6 +22,7 @@ import string
 
 # Download the stopwords dataset and the punkt tokenizer model from NLTK, which will be used for tokenization and stop word removal.
 nltk.download('stopwords')
+nltk.download('wordnet')
 
 # Define a function to load the NFCorpus data from the cloned GitHub repository.
 def loadNFCorpus():
