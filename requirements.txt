@@ -1,5 +1,5 @@
+sklearn
 numpy
-sklearn.metrics
 nltk
 collections
 gensim
