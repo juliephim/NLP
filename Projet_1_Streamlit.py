@@ -179,7 +179,15 @@ initialize_session_state_with_random_queries()
 
 # Sélectionner une requête à partir de l'état de session
 query_options = list(st.session_state.random_queries.keys())
-selected_query = st.selectbox('Select a Query :', query_options, on_change=update_selected_query_id)
+selected_query = st.selectbox('Select a Query : ', query_options, on_change=update_selected_query_id)
 
-if st.button('🔝5️⃣Show TOP 5 Document Ranking'):
+# Créer trois colonnes
+col1, col2, col3 = st.beta_columns([1,2,1])
+
+# Mettre uniquement le bouton dans la colonne du milieu
+with col2:
+    button_pressed = st.button('🔝Show TOP 5 Document Ranking')
+
+# Afficher les résultats de display_document_ranking en dehors des colonnes
+if button_pressed:
     display_document_ranking(selected_query)
